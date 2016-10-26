@@ -6,8 +6,8 @@ See https://www.conrad.de/de/relaiskarte-baustein-197720-12-vdc-24-vdc-197720.ht
 Requirements
 ------------
 
-Python 2.6 or higher
-slave 0.4.0 (https://github.com/p3trus/slave)
+- Python 2.6 or higher
+- slave 0.4.0 or higher (https://github.com/p3trus/slave)
 
 
 
@@ -16,4 +16,4 @@ Licensing
 
 You should have received a copy of the `GNU General Public License` along with Relais-197720; see the file COPYING
 
-.. _GNU General Public License: http://www.gnu.org/licenses/gpl.html
+GNU General Public License: http://www.gnu.org/licenses/gpl.html
