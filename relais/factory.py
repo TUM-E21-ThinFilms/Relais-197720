@@ -18,6 +18,7 @@ class RelaisFactory:
 	return logger
 
     def create_relais(self, device='/dev/ttyUSB2', logger=None):
+	# use your own device mapping here...
 	if logger is None:
 	    logger = self.get_logger()
 
