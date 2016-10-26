@@ -2,7 +2,7 @@ import sys
 
 from setuptools import setup, find_packages
 
-requires = []
+requires = ['slave']
 
 desc = ('An implementation of the Conrad Relais 197720 card')
 
