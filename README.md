@@ -42,6 +42,12 @@ relais.del_single(64) # disable port 7
 relais.toggle(8 + 64) # toggle port 4 and 7
 ``` 
 
+Installation
+-----------
+To install, simply do
+```
+python setup.py install
+```
 
 
 Requirements
