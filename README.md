@@ -3,13 +3,52 @@ Serial RS232 python implementation of the "Conrad 197720 Relaiskarte"
 
 See https://www.conrad.de/de/relaiskarte-baustein-197720-12-vdc-24-vdc-197720.html
 
+Usage
+-----
+
+#### Listen on device /dev/ttyUSB2
+```
+from relais.factory import RelaisFactory
+factory = RelaisFactory()
+relais = fac.create_relais('/dev/ttyUSB2')
+```
+
+#### Setup multpile relais cards in series (currently not working)
+```
+relais.setup()
+```
+
+#### Test message
+```
+relais.nop() # NoOperation
+```
+
+#### Reading active ports
+```
+ports = relais.get_port()
+if ports.get_ports() & 16:
+    print("port 5 active") # 5^2 = 16
+```
+#### Setting ports
+```
+relais.set_port(255) # Enable all ports
+relais.set_port(1 + pow(2,2) + pow(2,6)) # Enabled port 1,2 and 6, disable all other
+```
+
+#### Set/del/toggle single port
+```
+relais.set_single(8) # enable port 4
+relais.del_single(64) # disable port 7
+relais.toggle(8 + 64) # toggle port 4 and 7
+``` 
+
+
+
 Requirements
 ------------
 
 - Python 2.6 or higher
 - slave 0.4.0 or higher (https://github.com/p3trus/slave)
-
-
 
 Licensing
 ---------
