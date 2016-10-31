@@ -36,18 +36,15 @@ class RelaisProtocol(Protocol):
 
     def send_message(self, transport, message):        
         message.finish()
-
-        current_frame = message.get_frame()
-        self.send_frame(transport, current_frame)
+        self.send_frame(transport, message.get_frame())
             
     def send_frame(self, transport, frame, retries=4):
         if retries < 0:
             raise CommunicationError("Could not send frame")
         
-        raw_data = frame.get_raw()
-	raw_data = map(chr, raw_data)
+	raw_data = map(chr, frame.get_raw())
         
-        self.logger.debug('write (%s bytes): "%s"', str(len(raw_data)), " ".join(map(hex, frame.get_raw())))
+        self.logger.debug('Write (%s bytes): "%s"', str(len(raw_data)), " ".join(map(hex, frame.get_raw())))
         
         transport.write("".join(raw_data))
             
@@ -60,20 +57,15 @@ class RelaisProtocol(Protocol):
         try:              
             first = transport.read_bytes(4)
         except slave.transport.Timeout:
-            first = None
+            raise CommunicationError("Received no answer")
 	
         self.logger.debug("Received: %s", repr(first))
 
 	try:
-	    # TODO: Sending `setup` cmd will probably send more than 8 bytes back 
-	    # depending on the number of relais cards. currently we only support a single one.
-	    # Future development could improve that?
-            junk = transport.read_bytes(8)
+	    while(True):
+            	junk = transport.read_bytes(4)
 	except slave.transport.Timeout:
             pass
-
-	if first is None:
-	    raise CommunicationError("Received no answer")
 
 	resp = []
 
@@ -83,29 +75,25 @@ class RelaisProtocol(Protocol):
 	return Frame(resp)  
           
     def read_response(self, transport):
-
-        message = Message()
-
-        frame = self.read_response_frame(transport)
+	frame = self.read_response_frame(transport)
           
 	if not frame.is_valid():
 	    self.logger.error("Received an invalid frame: %s", frame.get_raw())
 	    raise CommunicationError("Received an invalid frame")
-                          
+
+        message = Message()             
         message.set_frame(frame)
             
         return message
     
     def query(self, transport, message):
         if not isinstance(message, Message):
-            raise TypeError("message must be an instance of Message")
+            raise TypeError()
             
-        self.logger.debug('Sending message "%s"', message)
-                          
-        self.send_message(transport, message)
-               
-        response = self.read_response(transport)
-        return response
+        self.logger.debug('Sending message "%s"', message)     
+        
+	self.send_message(transport, message)       
+        return self.read_response(transport)
 
     def write(self, transport, message):
         return self.query(transport, message)
