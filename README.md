@@ -8,7 +8,7 @@ Usage
 
 #### Listen on device /dev/ttyUSB2
 ```
-from relais.factory import RelaisFactory
+from relais_197720.factory import RelaisFactory
 factory = RelaisFactory()
 relais = fac.create_relais('/dev/ttyUSB2')
 ```
