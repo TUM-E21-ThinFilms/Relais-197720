@@ -1,6 +1,5 @@
 # Relais-197720, (c) 2016, see AUTHORS. Licensed under the GNU GPL.
 
-
 import logging
 import slave
 from slave.transport import Timeout
@@ -85,8 +84,8 @@ class RelaisProtocol(Protocol):
         return message
     
     def query(self, transport, message):
-        if not isinstance(message, Message):
-            raise TypeError("message must be an instance of Message")
+#        if not isinstance(message, Message):
+#            raise TypeError("message must be an instance of Message")
             
         self.logger.debug('Sending message "%s"', message)
                           

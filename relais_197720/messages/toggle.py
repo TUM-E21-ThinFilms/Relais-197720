@@ -1,6 +1,6 @@
 # Relais-197720, (c) 2016, see AUTHORS. Licensed under the GNU GPL.
 
-from relais.message import Message, Frame, Payload, AbstractMessage, AbstractResponse
+from relais_197720.message import Message, Frame, Payload, AbstractMessage, AbstractResponse
 
 class ToggleMessage(AbstractMessage):
     def setup(self):
