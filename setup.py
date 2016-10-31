@@ -7,8 +7,8 @@ requires = ['slave']
 desc = ('An implementation of the Conrad Relais 197720 card')
 
 setup(
-    name='relais',
-    version=__import__('relais').__version__,
+    name='relais_197720',
+    version=__import__('relais_197720').__version__,
     author='Alexander Book',
     author_email='alexander.book@frm2.tum.de',
     license = 'GNU General Public License (GPL), Version 3',
