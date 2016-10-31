@@ -64,12 +64,11 @@ class RelaisDriver(Driver):
         return SetSingleResponse(self.send_message(msg))
     
     def del_single(self, ports):
-        return DelSingleResponse(self.send_message(DelSingleMessage()))
+	msg = DelSingleMessage()
+	msg.del_single(ports)   
+        return DelSingleResponse(self.send_message(msg))
     
     def toggle(self, ports):
         msg = ToggleMessage()
         msg.set_toggle(ports)
         return ToggleResponse(self.send_message(msg))
-    
-        
-    

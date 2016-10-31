@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from relais.message import Message, Frame, Payload, AbstractMessage, AbstractResponse
+from relais_197720.message import Message, Frame, Payload, AbstractMessage, AbstractResponse
 
 class DelSingleMessage(AbstractMessage):
     def setup(self):
@@ -23,7 +23,7 @@ class DelSingleMessage(AbstractMessage):
         frame.set_command(7)
         self.msg.set_frame(frame)
         
-    def set_single(self, ports):
+    def del_single(self, ports):
         self.payload.set_data(ports & 0xFF)
         
 class DelSingleResponse(AbstractResponse):

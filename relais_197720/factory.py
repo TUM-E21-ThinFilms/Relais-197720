@@ -30,7 +30,7 @@ class RelaisFactory:
 	logger.addHandler(fh)
 	return logger
 
-    def create_relais(self, device='/dev/ttyUSB2', logger=None):
+    def create_relais(self, device='/dev/ttyUSB3', logger=None):
 	if logger is None:
 	    logger = self.get_logger()
 

@@ -13,12 +13,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from relais.message import Message, Frame, Payload, AbstractMessage, AbstractResponse
+from relais_197720.message import Message, Frame, Payload, AbstractMessage, AbstractResponse
 
 class GetPortMessage(AbstractMessage):
     def setup(self):
         payload = Payload(0)
         frame = Frame(payload)
+	frame.set_payload(payload)
         frame.set_command(2)
         self.msg.set_frame(frame)
         
