@@ -54,14 +54,10 @@ class Frame(object):
         if isinstance(raw_frame, list) and len(raw_frame) == 4:
             self.set_command(raw_frame[0])
             self.set_address(raw_frame[1])
-            self.payload = Payload(raw_frame[2])
-            self.chksum = raw_frame[3] & 0xFF       
+            self.payload, self.chksum = Payload(raw_frame[2]), raw_frame[3] & 0xFF    
         else:
-            self.cmd = 0
-            self.addr = 1
-            self.payload = Payload(None)
-            self.chksum = 0
-        
+	    self.cmd, self.addr, self.payload, self.checksum = 0, 1, Payload(None), 0
+            
     def set_command(self, cmd):
         self.cmd = cmd & 0xFF
         
@@ -84,10 +80,9 @@ class Frame(object):
         return self.get_checksum() == self.compute_checksum()
         
     def compute_checksum(self):
-        array = [self.cmd, self.addr, self.payload.get_raw()]
-        
-        chksum = 0
-        for data in array:
+
+	chksum = 0
+        for data in [self.cmd, self.addr, self.payload.get_raw()]:
             chksum = chksum ^ data
            
         return chksum
@@ -106,9 +101,7 @@ class Frame(object):
         
 class AbstractMessage(object):
     def __init__(self):
-        self.msg = Message()
-	self.payload = None
-	self.frame = None
+	self.msg, self.payload, self.frame = Message(), None, None
         self.setup()
         
     def get_message(self):
@@ -125,7 +118,6 @@ class AbstractResponse(object):
 	self.msg = message
     
     def get_response(self):
-
         return self.msg
     
     def is_valid(self):
