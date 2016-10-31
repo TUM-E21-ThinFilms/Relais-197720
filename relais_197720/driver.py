@@ -59,6 +59,3 @@ class RelaisDriver(Driver):
         msg = ToggleMessage()
         msg.set_toggle(ports)
         return ToggleResponse(self.send_message(msg))
-    
-        
-    

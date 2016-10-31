@@ -6,6 +6,7 @@ class GetPortMessage(AbstractMessage):
     def setup(self):
         payload = Payload(0)
         frame = Frame(payload)
+	frame.set_payload(payload)
         frame.set_command(2)
         self.msg.set_frame(frame)
         
