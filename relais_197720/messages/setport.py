@@ -17,11 +17,7 @@ from relais_197720.message import Message, Frame, Payload, AbstractMessage, Abst
 
 class SetPortMessage(AbstractMessage):
     def setup(self):
-	self.payload = Payload(0)
-        frame = Frame(self.payload)
-	frame.set_payload(self.payload)
-        frame.set_command(3)
-        self.msg.set_frame(frame)
+        self.frame.set_command(3)
         
     def set_port(self, ports):
         self.payload.set_data(ports & 0xFF)
