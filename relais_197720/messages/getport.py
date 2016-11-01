@@ -17,11 +17,7 @@ from relais_197720.message import Message, Frame, Payload, AbstractMessage, Abst
 
 class GetPortMessage(AbstractMessage):
     def setup(self):
-        payload = Payload(0)
-        frame = Frame(payload)
-	frame.set_payload(payload)
-        frame.set_command(2)
-        self.msg.set_frame(frame)
+        self.frame.set_command(2)
         
 class GetPortResponse(AbstractResponse):
     def _is_valid(self):
