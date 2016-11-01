@@ -13,8 +13,7 @@ factory = RelaisFactory()
 relais = fac.create_relais('/dev/ttyUSB2')
 ```
 
-#### Setup relais card 
-Currently, only one card is supported. For multiple cards in series some minor changes have to be done.
+#### Setup relais cards (up to 255 in series)
 ```
 relais.setup()
 ```
