@@ -101,7 +101,9 @@ class Frame(object):
         
 class AbstractMessage(object):
     def __init__(self):
-	self.msg, self.payload, self.frame = Message(), None, None
+	self.payload, self.frame, self.msg = Payload(None), Frame(None), Message()
+	self.frame.set_payload(self.payload)
+	self.msg.set_frame(self.frame)
         self.setup()
         
     def get_message(self):
