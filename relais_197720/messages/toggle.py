@@ -17,11 +17,7 @@ from relais_197720.message import Message, Frame, Payload, AbstractMessage, Abst
 
 class ToggleMessage(AbstractMessage):
     def setup(self):
-        self.payload = Payload(0)
-        frame = Frame(None)
-	frame.set_payload(self.payload)
-        frame.set_command(7)
-        self.msg.set_frame(frame)
+        self.frame.set_command(7)
         
     def set_toggle(self, ports):
         self.payload.set_data(ports & 0xFF)
