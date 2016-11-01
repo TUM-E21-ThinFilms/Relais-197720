@@ -17,10 +17,7 @@ from relais_197720.message import Message, Frame, Payload, AbstractMessage, Abst
 
 class NOPMessage(AbstractMessage):
     def setup(self):
-        payload = Payload(0)
-        frame = Frame(payload)
-        frame.set_command(0)
-        self.msg.set_frame(frame)
+        self.frame.set_command(0)
         
 class NOPResponse(AbstractResponse):
     def _is_valid(self):
