@@ -23,5 +23,5 @@ class GetPortResponse(AbstractResponse):
     def _is_valid(self):
         return self.msg.get_frame().get_command() == 253
     
-    def get_ports(self):
+    def get_port(self):
         return self.msg.get_frame().get_payload().get_raw()
