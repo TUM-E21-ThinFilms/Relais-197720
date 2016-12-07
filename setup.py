@@ -17,7 +17,7 @@ import sys
 
 from setuptools import setup, find_packages
 
-requires = ['slave']
+requires = ['slave', 'e21_util']
 
 desc = ('An implementation of the Conrad Relais 197720 card')
 

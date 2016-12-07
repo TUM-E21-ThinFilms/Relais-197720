@@ -15,12 +15,14 @@
 
 import logging
 import slave
+
+import e21_util
+from e21_util.lock import InterProcessTransportLock
+from e21_util.error import CommunicationError
+
 from slave.transport import Timeout
 from slave.protocol import Protocol
 from message import Message, Frame, Payload
-
-class CommunicationError(Exception):
-    pass
 
 class RelaisProtocol(Protocol):
     def __init__(self, logger=None):
@@ -42,7 +44,7 @@ class RelaisProtocol(Protocol):
         if retries < 0:
             raise CommunicationError("Could not send frame")
         
-	raw_data = map(chr, frame.get_raw())
+        raw_data = map(chr, frame.get_raw())
         
         self.logger.debug('Write (%s bytes): "%s"', str(len(raw_data)), " ".join(map(hex, frame.get_raw())))
         
@@ -51,9 +53,7 @@ class RelaisProtocol(Protocol):
     def read_response_frame(self, transport, retries=4):
         if retries < 0:
             raise CommunicationError("Could not read response")
-        
-        response = []
-        
+
         try:              
             first = transport.read_bytes(4)
         except slave.transport.Timeout:
@@ -61,25 +61,25 @@ class RelaisProtocol(Protocol):
 	
         self.logger.debug("Received: %s", repr(first))
 
-	try:
-	    while(True):
-            	junk = transport.read_bytes(4)
-	except slave.transport.Timeout:
+        try:
+            while(True):
+                junk = transport.read_bytes(4)
+        except slave.transport.Timeout:
             pass
 
-	resp = []
+        resp = []
 
-	for el in first:
-	    resp.append(el)
+        for el in first:
+            resp.append(el)
 
-	return Frame(resp)  
+        return Frame(resp)
           
     def read_response(self, transport):
-	frame = self.read_response_frame(transport)
+        frame = self.read_response_frame(transport)
           
-	if not frame.is_valid():
-	    self.logger.error("Received an invalid frame: %s", frame.get_raw())
-	    raise CommunicationError("Received an invalid frame")
+        if not frame.is_valid():
+            self.logger.error("Received an invalid frame: %s", frame.get_raw())
+            raise CommunicationError("Received an invalid frame")
 
         message = Message()             
         message.set_frame(frame)
@@ -87,13 +87,14 @@ class RelaisProtocol(Protocol):
         return message
     
     def query(self, transport, message):
-        if not isinstance(message, Message):
-            raise TypeError()
-            
-        self.logger.debug('Sending message "%s"', message)     
-        
-	self.send_message(transport, message)       
-        return self.read_response(transport)
+        with InterProcessTransportLock(transport):
+            if not isinstance(message, Message):
+                raise TypeError()
+
+            self.logger.debug('Sending message "%s"', message)
+
+            self.send_message(transport, message)
+            return self.read_response(transport)
 
     def write(self, transport, message):
         return self.query(transport, message)
