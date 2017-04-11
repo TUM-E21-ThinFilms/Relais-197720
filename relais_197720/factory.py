@@ -16,19 +16,12 @@
 from protocol import RelaisProtocol
 from driver import RelaisDriver
 from e21_util.transport import Serial
-import logging
+from e21_util.logging import get_sputter_logger
 
 class RelaisFactory:
 	
 	def get_logger(self):
-		logger = logging.getLogger('Relais-197720')
-		logger.setLevel(logging.DEBUG)
-		formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-		fh = logging.FileHandler('relais.log')
-		fh.setLevel(logging.DEBUG)
-		fh.setFormatter(formatter)
-		logger.addHandler(fh)
-		return logger
+		return get_sputter_logger('Relais-197720', 'relais.log')
 
 	def create_relais(self, device='/dev/ttyUSB3', logger=None):
 		if logger is None:
