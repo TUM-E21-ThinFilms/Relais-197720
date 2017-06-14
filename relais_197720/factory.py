@@ -17,6 +17,7 @@ from protocol import RelaisProtocol
 from driver import RelaisDriver
 from e21_util.transport import Serial
 from e21_util.log import get_sputter_logger
+from e21_util.ports import Ports
 
 class RelaisFactory:
 	
@@ -26,5 +27,8 @@ class RelaisFactory:
 	def create_relais(self, device='/dev/ttyUSB3', logger=None):
 		if logger is None:
 			logger = self.get_logger()
+
+		if device is None:
+			device = Ports().get_port(Ports.DEVICE_RELAIS)
 
 		return RelaisDriver(Serial(device, 19200, 8, 'N', 1, 1), RelaisProtocol(logger=logger))
