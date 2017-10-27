@@ -20,11 +20,11 @@ from e21_util.log import get_sputter_logger
 from e21_util.ports import Ports
 
 class RelaisFactory:
-	
+
 	def get_logger(self):
 		return get_sputter_logger('Relais-197720', 'relais.log')
 
-	def create_relais(self, device='/dev/ttyUSB3', logger=None):
+	def create_relais(self, device=None, logger=None):
 		if logger is None:
 			logger = self.get_logger()
 
