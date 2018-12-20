@@ -15,13 +15,13 @@
 
 from slave.driver import Driver
 from protocol import RelaisProtocol
-from messages.nop import NOPMessage, NOPResponse
-from messages.setup import SetupMessage, SetupResponse
-from messages.getport import GetPortMessage, GetPortResponse
-from messages.setport import SetPortMessage, SetPortResponse
-from messages.setsingle import SetSingleMessage, SetSingleResponse
-from messages.delsingle import DelSingleMessage, DelSingleResponse
-from messages.toggle import ToggleMessage, ToggleResponse
+from relais_197720.messages.nop import NOPMessage, NOPResponse
+from relais_197720.messages.setup import SetupMessage, SetupResponse
+from relais_197720.messages.getport import GetPortMessage, GetPortResponse
+from relais_197720.messages.setport import SetPortMessage, SetPortResponse
+from relais_197720.messages.setsingle import SetSingleMessage, SetSingleResponse
+from relais_197720.messages.delsingle import DelSingleMessage, DelSingleResponse
+from relais_197720.messages.toggle import ToggleMessage, ToggleResponse
 
 class RelaisDriver(Driver):
     

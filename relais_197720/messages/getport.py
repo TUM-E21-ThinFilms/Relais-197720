@@ -15,13 +15,14 @@
 
 from relais_197720.message import Message, Frame, Payload, AbstractMessage, AbstractResponse
 
+
 class GetPortMessage(AbstractMessage):
     def setup(self):
         self.frame.set_command(2)
-        
+
 class GetPortResponse(AbstractResponse):
     def _is_valid(self):
         return self.msg.get_frame().get_command() == 253
-    
+
     def get_port(self):
         return self.msg.get_frame().get_payload().get_raw()

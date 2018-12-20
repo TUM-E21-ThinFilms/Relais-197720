@@ -13,16 +13,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from protocol import RelaisProtocol
-from driver import RelaisDriver
+from relais_197720.protocol import RelaisProtocol
+from relais_197720.driver import RelaisDriver
 from e21_util.transport import Serial
-from e21_util.log import get_sputter_logger
+from e21_util.log import get_logger
 from e21_util.ports import Ports
 
 class RelaisFactory:
 
 	def get_logger(self):
-		return get_sputter_logger('Relais-197720', 'relais.log')
+		return get_logger('Relais-197720', 'relais.log')
 
 	def create_relais(self, device=None, logger=None):
 		if logger is None:

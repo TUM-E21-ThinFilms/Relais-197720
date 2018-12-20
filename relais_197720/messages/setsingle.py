@@ -15,13 +15,15 @@
 
 from relais_197720.message import Message, Frame, Payload, AbstractMessage, AbstractResponse
 
+
 class SetSingleMessage(AbstractMessage):
     def setup(self):
         self.frame.set_command(6)
-        
+
     def set_single(self, ports):
         self.payload.set_data(ports & 0xFF)
-        
+
+
 class SetSingleResponse(AbstractResponse):
     def _is_valid(self):
         return self.msg.get_frame().get_command() == 249

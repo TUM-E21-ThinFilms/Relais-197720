@@ -15,10 +15,12 @@
 
 from relais_197720.message import Message, Frame, Payload, AbstractMessage, AbstractResponse
 
+
 class NOPMessage(AbstractMessage):
     def setup(self):
         self.frame.set_command(0)
-        
+
+
 class NOPResponse(AbstractResponse):
     def _is_valid(self):
         return self.msg.get_frame().get_command() == 255

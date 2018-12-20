@@ -15,13 +15,15 @@
 
 from relais_197720.message import Message, Frame, Payload, AbstractMessage, AbstractResponse
 
+
 class SetupMessage(AbstractMessage):
     def setup(self):
         self.frame.set_command(1)
-        
+
+
 class SetupResponse(AbstractResponse):
     def _is_valid(self):
         return self.msg.get_frame().get_command() == 254
-    
+
     def get_version(self):
         return self.msg.get_frame().get_payload().get_raw()
