@@ -1,4 +1,4 @@
-# Copyright (C) 2016, see AUTHORS.md
+# Copyright (C) 2018, see AUTHORS.md
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,21 +13,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from relais_197720.message import Message, Frame, Payload, AbstractMessage, AbstractResponse
 
-
-class SetupMessage(AbstractMessage):
-    def setup(self):
-        self.frame.set_command(1)
-
-
-class SetupResponse(AbstractResponse):
-    def _is_valid(self):
-        return all(map(lambda x: x.get_frame().get_command() == 254, self.msg))
-
-    def get_version(self):
-        return self.msg.get_frame().get_payload().get_raw()
-
-    def get_number_of_devices(self):
-        return len(self.msgs)
+class Relay(object):
+    PORT_1 = 1
+    PORT_2 = 2
+    PORT_3 = 4
+    PORT_4 = 8
+    PORT_5 = 16
+    PORT_6 = 32
+    PORT_7 = 64
+    PORT_8 = 128
 

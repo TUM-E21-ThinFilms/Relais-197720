@@ -13,22 +13,25 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from relais_197720.protocol import RelaisProtocol
-from relais_197720.driver import RelaisDriver
+from relais_197720.protocol import RelayProtocol
+from relais_197720.driver import RelayDriver
 from e21_util.transport import Serial
 from e21_util.log import get_logger
 from e21_util.ports import Ports
 
-class RelaisFactory:
 
-	def get_logger(self):
-		return get_logger('Relais-197720', 'relais.log')
+class RelayFactory(object):
 
-	def create_relais(self, device=None, logger=None):
-		if logger is None:
-			logger = self.get_logger()
+    def get_logger(self):
+        return get_logger('Relay-197720', 'relay.log')
 
-		if device is None:
-			device = Ports().get_port(Ports.DEVICE_RELAIS)
+    def create_relay(self, device=None, logger=None):
+        if logger is None:
+            logger = self.get_logger()
 
-		return RelaisDriver(Serial(device, 19200, 8, 'N', 1, 1), RelaisProtocol(logger=logger))
+        if device is None:
+            device = Ports().get_port(Ports.DEVICE_RELAY)
+
+        transport = Serial(device, 19200, 8, 'N', 1, 1)
+
+        return RelayDriver(RelayProtocol(transport, logger=logger))

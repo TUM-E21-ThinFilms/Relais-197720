@@ -13,7 +13,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from slave.driver import Driver
 from relais_197720.protocol import RelaisProtocol
 from relais_197720.messages.nop import NOPMessage, NOPResponse
 from relais_197720.messages.setup import SetupMessage, SetupResponse
@@ -23,52 +22,42 @@ from relais_197720.messages.setsingle import SetSingleMessage, SetSingleResponse
 from relais_197720.messages.delsingle import DelSingleMessage, DelSingleResponse
 from relais_197720.messages.toggle import ToggleMessage, ToggleResponse
 
-class RelaisDriver(Driver):
-    
-    RELAIS_K1 = 1
-    RELAIS_K2 = 2
-    RELAIS_K3 = 4
-    RELAIS_K4 = 8
-    RELAIS_K5 = 16
-    RELAIS_K6 = 32
-    RELAIS_K7 = 64
-    RELAIS_K8 = 128
-    
-    def __init__(self, transport, protocol=None):
-        if protocol is None:
-            protocol = RelaisProtocol()
-        
-        super(RelaisDriver, self).__init__(transport, protocol)
 
-    def send_message(self, message):
-        return self._protocol.query(self._transport, message.get_message())
-    
-    def nop(self):
+class RelayDriver(object):
+
+    def __init__(self, protocol):
+        self._protocol = protocol
+
+    def send_message(self, message, address):
+        message.get_message().get_frame().set_address(address)
+        return self._protocol.query(message.get_message())
+
+    def nop(self, address):
         msg = NOPMessage()
-        return NOPResponse(self.send_message(msg))
-    
-    def setup(self):
-        return SetupResponse(self.send_message(SetupMessage()))
-    
-    def get_port(self):
-        return GetPortResponse(self.send_message(GetPortMessage()))
-    
-    def set_port(self, ports):
+        return NOPResponse(self.send_message(msg, address))
+
+    def setup(self, address=1):
+        return SetupResponse(self.send_message(SetupMessage(), address))
+
+    def get_port(self, address):
+        return GetPortResponse(self.send_message(GetPortMessage(), address))
+
+    def set_port(self, ports, address):
         msg = SetPortMessage()
         msg.set_port(ports)
-        return SetPortResponse(self.send_message(msg))
-    
-    def set_single(self, ports):
+        return SetPortResponse(self.send_message(msg, address))
+
+    def set_single(self, ports, address):
         msg = SetSingleMessage()
         msg.set_single(ports)
-        return SetSingleResponse(self.send_message(msg))
-    
-    def del_single(self, ports):
+        return SetSingleResponse(self.send_message(msg, address))
+
+    def del_single(self, ports, address):
         msg = DelSingleMessage()
         msg.del_single(ports)
-        return DelSingleResponse(self.send_message(msg))
-    
-    def toggle(self, ports):
+        return DelSingleResponse(self.send_message(msg, address))
+
+    def toggle(self, ports, address):
         msg = ToggleMessage()
         msg.set_toggle(ports)
-        return ToggleResponse(self.send_message(msg))
+        return ToggleResponse(self.send_message(msg, address))

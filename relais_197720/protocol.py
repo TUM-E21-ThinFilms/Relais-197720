@@ -13,84 +13,76 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import logging
-import slave
-
-import e21_util
 from e21_util.lock import InterProcessTransportLock
 from e21_util.error import CommunicationError
-
-from slave.transport import Timeout
-from slave.protocol import Protocol
-from relais_197720.message import Message, Frame, Payload
+from relais_197720.message import Message, Frame
+from serial import SerialTimeoutException
 
 
-class RelaisProtocol(Protocol):
-    def __init__(self, logger=None):
+class RelayProtocol(object):
+    def __init__(self, transport, logger, lock=None):
+        self._transport = transport
+        self._logger = logger
 
-        if logger is None:
-            logger = logging.getLogger(__name__)
-            logger.addHandler(logging.NullHandler())
+        if lock is None:
+            lock = InterProcessTransportLock(self._transport)
 
-        self.logger = logger
+        self._lock = lock
 
-    def set_logger(self, logger):
-        self.logger = logger
+    def send_message(self, message):
 
-    def send_message(self, transport, message):
+        # Important, this calculates the checksum
         message.finish()
-        self.send_frame(transport, message.get_frame())
 
-    def send_frame(self, transport, frame, retries=4):
-        if retries < 0:
-            raise CommunicationError("Could not send frame")
+        frame = message.get_frame()
+        raw_data = frame.get_raw()
 
-        raw_data = map(chr, frame.get_raw())
+        self.logger.debug('Write ({} bytes): "{}"'.format(len(raw_data), frame))
 
-        self.logger.debug('Write (%s bytes): "%s"', str(len(raw_data)), " ".join(map(hex, frame.get_raw())))
+        self._transport.write(bytearray(raw_data))
 
-        transport.write("".join(raw_data))
-
-    def read_response_frame(self, transport):
+    def clear(self):
         try:
-            first = transport.read_bytes(4)
-        except slave.transport.Timeout:
-            raise CommunicationError("Received no answer")
+            while True:
+                self._transport.read_bytes(4)
+        except SerialTimeoutException:
+            pass
 
-        self.logger.debug("Received: %s", repr(first))
+    def read_response_frames(self):
+        responses = []
 
         try:
             while True:
-                junk = transport.read_bytes(4)
-        except slave.transport.Timeout:
-            pass
+                raw_data = self._transport.read_bytes(4)
+                self._logger.debug("Received response '{}'".format(repr(raw_data)))
+                responses.append(Frame(list(raw_data)))
+        except SerialTimeoutException:
+            self.clear()
 
-        resp = []
+        return responses
 
-        for el in first:
-            resp.append(el)
+    def read_response(self):
+        frames = self.read_response_frames()
+        messages = []
 
-        return Frame(resp)
+        for frame in frames:
+            if not frame.is_valid():
+                self.logger.error("Received an invalid frame: {}", frame)
+                raise CommunicationError("Received an invalid frame")
 
-    def read_response(self, transport):
-        frame = self.read_response_frame(transport)
+            message = Message()
+            message.set_frame(frame)
+            messages.append(message)
 
-        if not frame.is_valid():
-            self.logger.error("Received an invalid frame: %s", frame.get_raw())
-            raise CommunicationError("Received an invalid frame")
+        return messages
 
-        message = Message()
-        message.set_frame(frame)
-
-        return message
-
-    def query(self, transport, message):
-        with InterProcessTransportLock(transport):
+    def query(self, message):
+        with self._lock:
             if not isinstance(message, Message):
-                raise TypeError()
+                raise TypeError("message is not an instance of Message")
 
-            self.send_message(transport, message)
-            return self.read_response(transport)
+            self.send_message(message)
+            return self.read_response()
 
-    def write(self, transport, message):
-        return self.query(transport, message)
+    def write(self, message):
+        return self.query(message)
