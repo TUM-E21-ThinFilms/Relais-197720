@@ -12,22 +12,18 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+from serial import SerialTimeoutException
 
 from e21_util.lock import InterProcessTransportLock
 from e21_util.error import CommunicationError
+
 from relais_197720.message import Message, Frame
-from serial import SerialTimeoutException
 
 
 class RelayProtocol(object):
-    def __init__(self, transport, logger, lock=None):
+    def __init__(self, transport, logger):
         self._transport = transport
         self._logger = logger
-
-        if lock is None:
-            lock = InterProcessTransportLock(self._transport)
-
-        self._lock = lock
 
     def send_message(self, message):
 
@@ -77,7 +73,9 @@ class RelayProtocol(object):
         return messages
 
     def query(self, message):
-        with self._lock:
+        # the with statement blocks all other processes/threads from accessing the transport resource,
+        # well actually the device itself is blocked
+        with self._transport:
             if not isinstance(message, Message):
                 raise TypeError("message is not an instance of Message")
 
