@@ -12,7 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+from e21_util.hinting import List
 
 class Message(object):
     def __init__(self):
@@ -126,7 +126,7 @@ class AbstractMessage(object):
 class AbstractResponse(object):
     def __init__(self, message):
         assert isinstance(message, Message)
-        
+
         self.msg = message
 
     def get_address(self):
@@ -147,13 +147,8 @@ class AbstractResponse(object):
 
 class Responses(object):
     def __init__(self, responses):
+        assert List(AbstractResponse) == responses
         self._resps = responses
-        self._validate()
-
-    def _validate(self):
-        types = all(map(lambda x: isinstance(x, AbstractResponse), self._resps))
-        if not types:
-            raise RuntimeError("Given responses are not instances of AbstractResponse")
 
     def get_number(self):
         return len(self._resps)
