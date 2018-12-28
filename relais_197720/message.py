@@ -152,7 +152,7 @@ class Responses(object):
         self._validate()
 
     def _validate(self):
-        types = all(map(lambda x: instanceof(x, AbstractResponse), self._resps))
+        types = all(map(lambda x: isinstance(x, AbstractResponse), self._resps))
         if not types:
             raise RuntimeError("Given responses are not instances of AbstractResponse")
 
