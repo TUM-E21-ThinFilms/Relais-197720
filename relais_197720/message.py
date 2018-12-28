@@ -128,7 +128,7 @@ class AbstractResponse(object):
         if not isinstance(message, Message):
             raise TypeError("message was not an instance of Message")
 
-        self.msg = messages
+        self.msg = message
 
     def get_address(self):
         return self.msg.get_frame().get_address()
