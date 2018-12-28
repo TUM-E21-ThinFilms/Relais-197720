@@ -17,15 +17,17 @@ from serial import SerialTimeoutException
 from e21_util.lock import InterProcessTransportLock
 from e21_util.error import CommunicationError
 
-from relais_197720.message import Message, Frame
+from relais_197720.message import Message, Frame, AbstractMessage, Responses
 
 
 class RelayProtocol(object):
+    MESSAGE_LENGTH = 4
+
     def __init__(self, transport, logger):
         self._transport = transport
         self._logger = logger
 
-    def send_message(self, message):
+    def _send_message(self, message):
 
         # Important, this calculates the checksum
         message.finish()
@@ -37,29 +39,23 @@ class RelayProtocol(object):
 
         self._transport.write(bytearray(raw_data))
 
-    def clear(self):
-        try:
-            while True:
-                self._transport.read_bytes(4)
-        except SerialTimeoutException:
-            pass
-
-    def read_response_frames(self):
+    def _read_response_frames(self):
         responses = []
 
         try:
             while True:
-                raw_data = self._transport.read_bytes(4)
+                raw_data = self._transport.read_bytes(self.MESSAGE_LENGTH)
                 self._logger.debug("Received response '{}'".format(repr(raw_data)))
                 responses.append(Frame(list(raw_data)))
         except SerialTimeoutException:
-            self.clear()
+            pass
 
         return responses
 
-    def read_response(self):
-        frames = self.read_response_frames()
-        messages = []
+    def _read_response(self, msg):
+        frames = self._read_response_frames()
+        responses = []
+        resp_class = msg.get_response_class()
 
         for frame in frames:
             if not frame.is_valid():
@@ -68,19 +64,45 @@ class RelayProtocol(object):
 
             message = Message()
             message.set_frame(frame)
-            messages.append(message)
 
-        return messages
+            response = resp_class(message)
+
+            # only add valid responses, and discard 'relayed messages'
+            #
+            # A relayed message can appear in the following case:
+            #   Any cmd is sent to a non-existing relay (eg. address not existing), the
+            #   cmd will be forwarded to the next relay until the last relay in the chain reads it.
+            #   This relay will then just send the cmd back to the controlling pc.
+            if response.is_valid():
+                self._logger.debug("Got invalid response {}".format(response))
+                responses.append(response)
+
+        if len(responses) == 0:
+            raise CommunicationError("Received no valid response")
+
+        return Responses(responses)
 
     def query(self, message):
         # the with statement blocks all other processes/threads from accessing the transport resource,
         # well actually the device itself is blocked
-        with self._transport:
-            if not isinstance(message, Message):
-                raise TypeError("message is not an instance of Message")
+        try:
+            with self._transport:
+                if not isinstance(message, AbstractMessage):
+                    raise TypeError("message is not an instance of Message")
 
-            self.send_message(message)
-            return self.read_response()
+                self._send_message(message.get_message())
+                return self._read_response(message)
+        except CommunicationError as e:
+            self.clear()
+            raise e
 
     def write(self, message):
         return self.query(message)
+
+    def clear(self):
+        with self._transport:
+            try:
+                while True:
+                    self._transport.read_bytes(self.MESSAGE_LENGTH)
+            except SerialTimeoutException:
+                pass

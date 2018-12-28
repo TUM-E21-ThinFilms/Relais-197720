@@ -23,6 +23,9 @@ class DelSingleMessage(AbstractMessage):
     def del_single(self, ports):
         self.payload.set_data(ports & 0xFF)
 
+    def get_response_class(self):
+        return DelSingleResponse
+
 
 class DelSingleResponse(AbstractResponse):
     def _is_valid(self):

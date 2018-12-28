@@ -119,30 +119,52 @@ class AbstractMessage(object):
     def setup(self):
         raise NotImplementedError()
 
+    def get_response_class(self):
+        raise NotImplementedError()
+
 
 class AbstractResponse(object):
-    def __init__(self, messages):
-        if not isinstance(messages, list):
-            raise TypeError("Expecting a list of messages")
+    def __init__(self, message):
+        if not isinstance(message, Message):
+            raise TypeError("message was not an instance of Message")
 
-        for msg in messages:
-            if not isinstance(msg, Message):
-                raise TypeError("A message was not an instance of Message")
+        self.msg = messages
 
-        if len(messages) == 0:
-            raise RuntimeError("No message given")
-
-        self.msgs = messages
-        self.msg = self.msgs[0]
+    def get_address(self):
+        return self.msg.get_frame().get_address()
 
     def get_response(self):
         return self.msg
 
-    def get_responses(self):
-        return self.msgs
-
     def is_valid(self):
-        return all(map(lambda x: x.is_valid(), self.msgs)) and self._is_valid()
+        return self._is_valid()
 
     def _is_valid(self):
         return True
+
+    def __str__(self):
+        return str(self.msg)
+
+
+class Responses(object):
+    def __init__(self, responses):
+        self._resps = responses
+        self._validate()
+
+    def _validate(self):
+        types = all(map(lambda x: instanceof(x, AbstractResponse), self._resps))
+        if not types:
+            raise RuntimeError("Given responses are not instances of AbstractResponse")
+
+    def get_number(self):
+        return len(self._resps)
+
+    def get_response(self):
+        if len(self._resps) > 0:
+            return self._resps[0]
+
+        # should not happen
+        raise RuntimeError("Received no responses, protocol should have raised an exception beforehand")
+
+    def get_responses(self):
+        return self._resps

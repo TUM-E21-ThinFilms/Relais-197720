@@ -20,6 +20,10 @@ class GetPortMessage(AbstractMessage):
     def setup(self):
         self.frame.set_command(2)
 
+    def get_response_class(self):
+        return GetPortResponse
+
+
 class GetPortResponse(AbstractResponse):
     def _is_valid(self):
         return self.msg.get_frame().get_command() == 253

@@ -20,6 +20,9 @@ class NOPMessage(AbstractMessage):
     def setup(self):
         self.frame.set_command(0)
 
+    def get_response_class(self):
+        return NOPResponse
+
 
 class NOPResponse(AbstractResponse):
     def _is_valid(self):

@@ -20,24 +20,13 @@ class SetupMessage(AbstractMessage):
     def setup(self):
         self.frame.set_command(1)
 
+    def get_response_class(self):
+        return SetupResponse
+
 
 class SetupResponse(AbstractResponse):
     def _is_valid(self):
-        return all(map(lambda x: x.get_frame().get_command() == 254, self.msg))
+        return self.msg.get_frame().get_command() == 254
 
     def get_version(self):
         return self.msg.get_frame().get_payload().get_raw()
-
-    def get_number_of_devices(self):
-        # Every relay card generates after receiving the setup cmd a response, containing
-        # an increased address. Hence, for three relay cards, the following messages are sent:
-        #  relay-card 1:
-        #       resp(addr=0x01), cmd(setup, addr=0x02) -> cmd intercepted by relay 2
-        #  relay-card 2:
-        #       resp(addr=0x02), cmd(setup, addr=0x03) -> cmd intercepted by relay 3
-        #  relay-card 3:
-        #       resp(addr=0x03), cmd(setup, addr=0x04) -> cmd not intercepted, hence sent back to control pc
-        #
-        # Hence, in total N + 1 messages are sent back to the control pc.
-        return len(self.msgs) - 1
-

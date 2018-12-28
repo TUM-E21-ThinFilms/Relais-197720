@@ -24,3 +24,5 @@ class Relay(object):
     PORT_7 = 64
     PORT_8 = 128
 
+    BROADCAST_PORT = 0
+

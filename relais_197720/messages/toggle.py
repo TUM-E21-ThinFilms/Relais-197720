@@ -23,6 +23,9 @@ class ToggleMessage(AbstractMessage):
     def set_toggle(self, ports):
         self.payload.set_data(ports & 0xFF)
 
+    def get_response_class(self):
+        return ToggleResponse
+
 
 class ToggleResponse(AbstractResponse):
     def _is_valid(self):

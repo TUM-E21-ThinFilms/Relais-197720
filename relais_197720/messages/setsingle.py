@@ -23,6 +23,9 @@ class SetSingleMessage(AbstractMessage):
     def set_single(self, ports):
         self.payload.set_data(ports & 0xFF)
 
+    def get_response_class(self):
+        return SetSingleResponse
+
 
 class SetSingleResponse(AbstractResponse):
     def _is_valid(self):

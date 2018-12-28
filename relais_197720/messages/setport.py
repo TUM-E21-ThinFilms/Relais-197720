@@ -23,6 +23,9 @@ class SetPortMessage(AbstractMessage):
     def set_port(self, ports):
         self.payload.set_data(ports & 0xFF)
 
+    def get_response_class(self):
+        return SetPortResponse
+
 
 class SetPortResponse(AbstractResponse):
     def _is_valid(self):
