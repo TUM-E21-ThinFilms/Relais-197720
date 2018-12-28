@@ -14,6 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from relais_197720.protocol import RelayProtocol
+from relais_197720.message import AbstractMessage
 from relais_197720.messages.nop import NOPMessage
 from relais_197720.messages.setup import SetupMessage
 from relais_197720.messages.getport import GetPortMessage
@@ -26,11 +27,15 @@ from relais_197720.messages.toggle import ToggleMessage
 class RelayDriver(object):
 
     def __init__(self, protocol):
+        assert isinstance(protocol, RelayProtocol)
         self._protocol = protocol
 
     def send_message(self, message, address):
+        assert isinstance(message, AbstractMessage)
+        assert isinstance(address, int)
+
         message.get_message().get_frame().set_address(address)
-        return self._protocol.query(message)
+        return self._protocol.send(message)
 
     def nop(self, address):
         msg = NOPMessage()
