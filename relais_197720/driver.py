@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from relais_197720.protocol import RelaisProtocol
+from relais_197720.protocol import Relayotocol
 from relais_197720.messages.nop import NOPMessage, NOPResponse
 from relais_197720.messages.setup import SetupMessage, SetupResponse
 from relais_197720.messages.getport import GetPortMessage, GetPortResponse
