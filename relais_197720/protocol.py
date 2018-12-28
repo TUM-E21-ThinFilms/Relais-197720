@@ -37,7 +37,7 @@ class RelayProtocol(object):
         frame = message.get_frame()
         raw_data = frame.get_raw()
 
-        self.logger.debug('Write ({} bytes): "{}"'.format(len(raw_data), frame))
+        self._logger.debug('Write ({} bytes): "{}"'.format(len(raw_data), frame))
 
         self._transport.write(bytearray(raw_data))
 
@@ -67,7 +67,7 @@ class RelayProtocol(object):
 
         for frame in frames:
             if not frame.is_valid():
-                self.logger.error("Received an invalid frame: {}", frame)
+                self._logger.error("Received an invalid frame: {}", frame)
                 raise CommunicationError("Received an invalid frame")
 
             message = Message()
