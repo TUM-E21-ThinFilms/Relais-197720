@@ -35,7 +35,7 @@ class RelayProtocol(object):
 
     def _send_message(self, message):
         assert isinstance(message, Message)
-        
+
         # Important, this calculates the checksum
         message.finish()
 
@@ -96,9 +96,10 @@ class RelayProtocol(object):
             #   cmd will be forwarded to the next relay until the last relay in the chain reads it.
             #   This relay will then just send the cmd back to the controlling pc.
             if response.is_valid():
+                responses.append(response)
+            else:
                 self._logger.debug(
                     "Got invalid response '{}' for response of type {}".format(response, resp_class.__name__))
-                responses.append(response)
 
         # At least one response has to be valid. Note that not all responses are necessary valid.
         #
