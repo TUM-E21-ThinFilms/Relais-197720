@@ -55,7 +55,7 @@ class RelayProtocol(object):
             # of course, at most 256 responses are possible
             while True:
                 raw_data = self._transport.read_bytes(self.MESSAGE_LENGTH)
-                self._logger.debug("Received response '{}'".format(repr(raw_data)))
+                self._logger.debug("Received '{}'".format(" ".join(map(hex, list(raw_data)))))
                 responses.append(Frame(list(raw_data)))
         except SerialTimeoutException:
             # if we have a timeout, just ignore it. actually this signals that there is no response left for
