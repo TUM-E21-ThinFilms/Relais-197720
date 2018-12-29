@@ -100,7 +100,7 @@ class RelayProtocol(object):
                 responses.append(response)
             else:
                 self._logger.debug(
-                    "Got invalid response '{}' for response of type {}".format(response, resp_class.__name__))
+                    "Got invalid response '{}' of type {}".format(response, resp_class.__name__))
 
         # At least one response has to be valid. Note that not all responses are necessary valid.
         #
