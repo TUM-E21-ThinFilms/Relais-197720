@@ -15,7 +15,7 @@
 
 from relais_197720.protocol import RelayProtocol
 from relais_197720.driver import RelayDriver
-from e21_util.transport import Serial
+from e21_util.serial_connection import Serial
 from e21_util.log import get_logger
 from e21_util.ports import Ports
 
