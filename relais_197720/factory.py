@@ -15,23 +15,9 @@
 
 from relais_197720.protocol import RelayProtocol
 from relais_197720.driver import RelayDriver
-from e21_util.serial_connection import Serial
-from e21_util.log import get_logger
-from e21_util.ports import Ports
 
 
 class RelayFactory(object):
-
-    def get_logger(self):
-        return get_logger('Relay-197720', 'relay.log')
-
-    def create_relay(self, device=None, logger=None):
-        if logger is None:
-            logger = self.get_logger()
-
-        if device is None:
-            device = Ports().get_port(Ports.DEVICE_RELAY)
-
-        transport = Serial(device, 19200, 8, 'N', 1, 1)
-
-        return RelayDriver(RelayProtocol(transport, logger=logger))
+    @staticmethod
+    def create(transport, logger):
+        return RelayDriver(RelayProtocol(transport, logger))
