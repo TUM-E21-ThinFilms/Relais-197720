@@ -10,7 +10,7 @@ Usage
 ```
 from relais_197720.factory import RelaisFactory
 factory = RelaisFactory()
-relais = fac.create_relais('/dev/ttyUSB2')
+relais = factory.create_relais('/dev/ttyUSB2')
 ```
 
 #### Setup relais cards (up to 255 in series)
