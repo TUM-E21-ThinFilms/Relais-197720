@@ -8,9 +8,18 @@ Usage
 
 #### Listen on device /dev/ttyUSB2
 ```
-from relais_197720.factory import RelaisFactory
-factory = RelaisFactory()
-relais = factory.create_relais('/dev/ttyUSB2')
+import logging
+
+from relais_197720.factory import *
+from e21_util.serial_connection import *
+
+# Configure your serial port here
+serial = Serial('/dev/ttyUSB2')
+
+# Configure your logger if you need one
+logger = logging.getLogger('relay')
+
+relay = RelayFactory.create(serial, logger)
 ```
 
 #### Setup relais cards (up to 255 in series)
