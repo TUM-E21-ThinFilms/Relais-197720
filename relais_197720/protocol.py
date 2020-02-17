@@ -16,7 +16,6 @@ import logging
 
 from serial import SerialTimeoutException
 
-from e21_util.lock import InterProcessTransportLock
 from e21_util.error import CommunicationError
 from e21_util.transport import AbstractTransport
 

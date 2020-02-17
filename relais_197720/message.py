@@ -59,7 +59,7 @@ class Frame(object):
             self.set_address(raw_frame[1])
             self.payload, self.chksum = Payload(raw_frame[2]), raw_frame[3] & 0xFF
         else:
-            self.cmd, self.addr, self.payload, self.checksum = 0, 1, Payload(None), 0
+            self.cmd, self.addr, self.payload, self.chksum = 0, 1, Payload(None), 0
 
     def set_command(self, cmd):
         self.cmd = cmd & 0xFF
